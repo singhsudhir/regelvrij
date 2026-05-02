@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regelvrij — Minder admin. Meer ondernemen.</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fffef9;
+    --ink: #1a1714;
+    --ink2: #3d3830;
+    --muted: #8c8070;
+    --muted2: #b5a898;
+    --accent: #c8652a;
+    --accent-light: #f0e4d8;
+    --accent2: #2a6e5e;
+    --accent2-light: #d4ebe4;
+    --border: #e8e0d4;
+    --border2: #d4c8b8;
+    --surface: #f4f0ea;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* GRAIN TEXTURE OVERLAY */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 18px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: var(--cream);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 22px;
+    border-radius: 4px;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(200,101,42,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(42,110,94,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    color: var(--ink2);
+    line-height: 1.7;
+    margin-bottom: 36px;
+    font-style: italic;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover {
+    background: #b5571f;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(200,101,42,0.3);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink2);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 14px 28px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 1px solid var(--border2);
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: var(--ink2);
+    background: var(--surface);
+  }
+
+  /* HERO CARD */
+  .hero-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 8px 48px rgba(26,23,20,0.08);
+    position: relative;
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 16px 16px 0 0;
+  }
+
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .pain-list { list-style: none; }
+  .pain-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .pain-item:last-child { border-bottom: none; }
+
+  .pain-before {
+    flex: 1;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    text-decoration: line-through;
+    text-decoration-color: var(--muted2);
+  }
+  .arrow { color: var(--accent2); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .pain-after {
+    flex: 1;
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .card-bottom {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-stat {
+    text-align: center;
+  }
+  .card-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .card-stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .card-divider { width: 1px; height: 40px; background: var(--border); }
+
+  /* SECTION SHARED */
+  section { padding: 96px 48px; }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+
+  .section-sub {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    color: var(--ink2);
+    line-height: 1.7;
+    font-style: italic;
+    max-width: 560px;
+    margin-bottom: 52px;
+  }
+
+  /* FOR WHOM */
+  .for-whom { background: var(--surface); }
+
+  .niches-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .niche-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    transition: all 0.25s;
+    cursor: default;
+  }
+  .niche-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(200,101,42,0.1);
+  }
+
+  .niche-icon { font-size: 32px; margin-bottom: 14px; }
+  .niche-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .niche-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .niche-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* FLOWS */
+  .flows-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .flow-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s;
+  }
+  .flow-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(26,23,20,0.06);
+  }
+
+  .flow-num {
+    position: absolute;
+    top: 20px; right: 24px;
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--border);
+    line-height: 1;
+  }
+
+  .flow-icon { font-size: 28px; margin-bottom: 14px; }
+  .flow-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .flow-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+  .flow-saves {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent2);
+    background: var(--accent2-light);
+    padding: 5px 12px;
+    border-radius: 4px;
+  }
+
+  /* PRICING */
+  .pricing { background: var(--ink); }
+
+  .pricing h2 { color: var(--cream); }
+  .pricing .section-eyebrow { color: var(--accent); }
+  .pricing .section-sub { color: var(--muted2); }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .price-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 32px 28px;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .price-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.2);
+  }
+  .price-card.featured {
+    border-color: var(--accent);
+    background: rgba(200,101,42,0.08);
+  }
+  .featured-badge {
+    position: absolute;
+    top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 99px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .price-label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 12px;
+  }
+  .price-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .price-period {
+    font-size: 12px;
+    color: var(--muted2);
+    margin-bottom: 24px;
+  }
+  .price-items { list-style: none; margin-bottom: 28px; }
+  .price-item {
+    font-size: 13px;
+    color: rgba(250,247,242,0.75);
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .price-item::before { content: '✓'; color: var(--accent2); flex-shrink: 0; font-weight: 700; }
+
+  .btn-price {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--cream);
+  }
+  .btn-price:hover { background: rgba(255,255,255,0.08); }
+  .price-card.featured .btn-price {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .price-card.featured .btn-price:hover { background: #b5571f; }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-text h2 { margin-bottom: 20px; }
+
+  .about-body {
+    font-size: 15px;
+    color: var(--ink2);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .about-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+  .about-tag {
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--ink2);
+    font-weight: 500;
+  }
+
+  .about-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    box-shadow: 0 4px 24px rgba(26,23,20,0.06);
+  }
+
+  .quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 20px;
+  }
+  .quote::before {
+    content: '"';
+    position: absolute;
+    left: 0; top: -4px;
+    font-size: 40px;
+    color: var(--accent);
+    font-family: 'Playfair Display', serif;
+    line-height: 1;
+  }
+
+  .quote-author {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .divider {
+    width: 48px; height: 2px;
+    background: var(--accent);
+    margin: 20px 0;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--surface);
+    text-align: center;
+    padding: 96px 48px;
+  }
+
+  .cta-inner { max-width: 600px; margin: 0 auto; }
+  .cta-section h2 { margin-bottom: 16px; }
+  .cta-section .section-sub {
+    margin: 0 auto 36px;
+    text-align: center;
+  }
+  .cta-actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .cta-note {
+    font-size: 12px;
+    color: var(--muted2);
+    font-style: italic;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    padding: 36px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--cream);
+    font-weight: 700;
+  }
+  .footer-logo span { color: var(--accent); }
+  .footer-meta {
+    font-size: 12px;
+    color: var(--muted2);
+  }
+  .footer-contact {
+    font-size: 13px;
+    color: var(--muted2);
+    text-align: right;
+  }
+  .footer-contact a { color: var(--accent); text-decoration: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-left > * {
+    animation: fadeUp 0.7s ease both;
+  }
+  .hero-left > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero-left > *:nth-child(2) { animation-delay: 0.2s; }
+  .hero-left > *:nth-child(3) { animation-delay: 0.35s; }
+  .hero-left > *:nth-child(4) { animation-delay: 0.5s; }
+
+  .hero-card {
+    animation: fadeUp 0.7s ease 0.3s both;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .hero { padding: 100px 24px 60px; }
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    section { padding: 64px 24px; }
+    .niches-grid { grid-template-columns: 1fr; }
+    .flows-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 28px 24px; flex-direction: column; text-align: center; }
+    .footer-contact { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Regel<span>vrij</span></div>
+  <a href="#gesprek" class="nav-cta">Gratis gesprek plannen →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Automatisering voor Utrecht ondernemers</div>
+      <h1>Minder admin.<br><em>Meer ondernemen.</em></h1>
+      <p class="hero-sub">Uw meest tijdrovende taken — afspraken, bestellingen, verzekeringen, klantrecall — volledig geautomatiseerd. U doet er niets meer aan.</p>
+      <div class="hero-actions">
+        <a href="#gesprek" class="btn-primary">Plan een gratis gesprek</a>
+        <a href="https://singhsudhir.github.io/regelvrij-demo/" class="btn-secondary">Bekijk de demo →</a>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="card-label">Wat verandert er voor u</div>
+      <ul class="pain-list">
+        <li class="pain-item">
+          <span class="pain-before">Afspraken handmatig inplannen & bevestigen</span>
+          <span class="arrow">→</span>
+          <span class="pain-after">24/7 automatisch geregeld</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-before">"Is mijn bril/bestelling al klaar?" beantwoorden</span>
+          <span class="arrow">→</span>
+          <span class="pain-after">Klant krijgt automatisch bericht</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-before">Verzekeringsformulieren uitleggen & invullen</span>
+          <span class="arrow">→</span>
+          <span class="pain-after">Automatisch gegenereerd & verstuurd</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-before">Klanten die 2 jaar geleden kwamen vergeten</span>
+          <span class="arrow">→</span>
+          <span class="pain-after">Automatische recall — ze komen terug</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-before">Avondwerk om de administratie bij te houden</span>
+          <span class="arrow">→</span>
+          <span class="pain-after">Klaar als u de deur sluit</span>
+        </li>
+      </ul>
+      <div class="card-bottom">
+        <div class="card-stat">
+          <div class="card-stat-num">14u</div>
+          <div class="card-stat-label">bespaard/week</div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="card-stat">
+          <div class="card-stat-num">6 wk</div>
+          <div class="card-stat-label">break-even</div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="card-stat">
+          <div class="card-stat-num">€25K+</div>
+          <div class="card-stat-label">jaarwaarde</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHOM -->
+<section class="for-whom">
+  <div class="section-inner">
+    <div class="section-eyebrow">Voor wie</div>
+    <h2>Gemaakt voor <em>zelfstandige</em> ondernemers</h2>
+    <p class="section-sub">Geen grote ketens. Geen IT-afdelingen. Gewoon ondernemers die hun vak uitstekend beheersen — maar te veel tijd kwijt zijn aan dingen die ook automatisch kunnen.</p>
+
+    <div class="niches-grid">
+      <div class="niche-card">
+        <div class="niche-icon">👓</div>
+        <div class="niche-title">Opticiens</div>
+        <div class="niche-desc">Brillenklaar-meldingen, verzekeringsformulieren, oogmeting-reminders en 2-jaar recall — allemaal automatisch.</div>
+        <span class="niche-tag">Direct inzetbaar</span>
+      </div>
+      <div class="niche-card">
+        <div class="niche-icon">🦷</div>
+        <div class="niche-title">Tandartspraktijken</div>
+        <div class="niche-desc">Afspraken bevestigen, no-shows terugdringen, patiëntrecall na 6 maanden — zonder dat de assistente iets hoeft te doen.</div>
+        <span class="niche-tag">Direct inzetbaar</span>
+      </div>
+      <div class="niche-card">
+        <div class="niche-icon">🏡</div>
+        <div class="niche-title">Makelaars</div>
+        <div class="niche-desc">Bezichtigingsplanning, lead-opvolging, documenten versturen en kopers automatisch op de hoogte houden van nieuwe objecten.</div>
+        <span class="niche-tag">Beschikbaar</span>
+      </div>
+      <div class="niche-card">
+        <div class="niche-icon">💆</div>
+        <div class="niche-title">Schoonheidssalons & Kapsalons</div>
+        <div class="niche-desc">Afspraken inplannen, herinneren en herboeken bij no-shows — volledig via WhatsApp, 24/7.</div>
+        <span class="niche-tag">Beschikbaar</span>
+      </div>
+      <div class="niche-card">
+        <div class="niche-icon">🏋️</div>
+        <div class="niche-title">Fysiotherapeuten</div>
+        <div class="niche-desc">Patiëntintake, verwijsbrieven, verzekeringsvergoedingen en behandelherinneringen geautomatiseerd.</div>
+        <span class="niche-tag">Beschikbaar</span>
+      </div>
+      <div class="niche-card">
+        <div class="niche-icon">🔧</div>
+        <div class="niche-title">Installatiebedrijven & ZZP'ers</div>
+        <div class="niche-desc">Offertes opvolgen, facturen versturen, klanten op de hoogte houden van planning — zonder handmatig werk.</div>
+        <span class="niche-tag">Beschikbaar</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOWS -->
+<section>
+  <div class="section-inner">
+    <div class="section-eyebrow">Wat we automatiseren</div>
+    <h2>Vier flows die uw <em>avondwerk</em> elimineren</h2>
+    <p class="section-sub">Elke flow is op maat gebouwd voor uw branche en live binnen 5 werkdagen.</p>
+
+    <div class="flows-grid">
+      <div class="flow-card">
+        <div class="flow-num">01</div>
+        <div class="flow-icon">🆕</div>
+        <div class="flow-title">Nieuwe klant & afspraakinname</div>
+        <div class="flow-desc">Klanten die contact opnemen via uw website, WhatsApp of Google worden automatisch geholpen, ingepland en bevestigd — ook buiten openingstijden. No-shows? Wachtlijst wordt automatisch geactiveerd.</div>
+        <div class="flow-saves">✅ Bespaart ~6 uur/week</div>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">02</div>
+        <div class="flow-icon">📦</div>
+        <div class="flow-title">Bestellings- & statusupdates</div>
+        <div class="flow-desc">Zodra een bestelling klaar is, krijgt de klant automatisch een WhatsApp-bericht. Niet opgehaald na 7 dagen? Automatische herinnering. "Is het al klaar?" komt nooit meer voor.</div>
+        <div class="flow-saves">✅ Bespaart ~5 uur/week</div>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">03</div>
+        <div class="flow-icon">📋</div>
+        <div class="flow-title">Verzekering & declaraties</div>
+        <div class="flow-desc">AI berekent automatisch wat de klant terugkrijgt van zijn verzekeraar, genereert het ingevulde formulier als PDF en stuurt alles via WhatsApp. U hoeft niets meer uit te leggen.</div>
+        <div class="flow-saves">✅ Bespaart ~4 uur/week</div>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">04</div>
+        <div class="flow-icon">🔁</div>
+        <div class="flow-title">Klantrecall & heractivatie</div>
+        <div class="flow-desc">Klanten die u 1 of 2 jaar geleden hielp worden automatisch teruggehaald met een persoonlijk bericht dat refereert aan hun vorige bezoek. Passieve omzet terwijl u slaapt.</div>
+        <div class="flow-saves">✅ Genereert €10K–€40K/jaar extra</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing">
+  <div class="section-inner">
+    <div class="section-eyebrow">Investering</div>
+    <h2 style="color:var(--cream)">Transparante <em>prijzen</em></h2>
+    <p class="section-sub">Geen verborgen kosten. Geen lange contracten. U betaalt terug binnen 6 weken.</p>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-label">Starter</div>
+        <div class="price-num">€950</div>
+        <div class="price-period">eenmalig + €200/maand onderhoud</div>
+        <ul class="price-items">
+          <li class="price-item">1 automation flow naar keuze</li>
+          <li class="price-item">WhatsApp Business koppeling</li>
+          <li class="price-item">Installatie & uitleg</li>
+          <li class="price-item">30 dagen gratis bugfixes</li>
+          <li class="price-item">Maandelijks onderhoud & updates</li>
+        </ul>
+        <a href="#gesprek" class="btn-price">Plan een gesprek</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="featured-badge">Meest gekozen</div>
+        <div class="price-label">Compleet pakket</div>
+        <div class="price-num">€1.750</div>
+        <div class="price-period">eenmalig + €300/maand onderhoud</div>
+        <ul class="price-items">
+          <li class="price-item">Alle 4 automation flows</li>
+          <li class="price-item">WhatsApp Business API</li>
+          <li class="price-item">CRM / Airtable dashboard</li>
+          <li class="price-item">AI triage & persoonlijke berichten</li>
+          <li class="price-item">Installatie, uitleg & training</li>
+          <li class="price-item">30 dagen gratis bugfixes</li>
+          <li class="price-item">Maandelijks onderhoud & uitbreiding</li>
+        </ul>
+        <a href="#gesprek" class="btn-price">Plan een gesprek</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-label">Maatwerk</div>
+        <div class="price-num">Op maat</div>
+        <div class="price-period">offerte na intake gesprek</div>
+        <ul class="price-items">
+          <li class="price-item">Complexe multi-systeem koppelingen</li>
+          <li class="price-item">Meerdere locaties of vestigingen</li>
+          <li class="price-item">Eigen software integraties</li>
+          <li class="price-item">Data-analyses & rapportages</li>
+          <li class="price-item">Uitgebreide AI-toepassingen</li>
+        </ul>
+        <a href="#gesprek" class="btn-price">Neem contact op</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section>
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="section-eyebrow">Over Regelvrij</div>
+        <h2>Gebouwd op <em>jarenlange</em> data-ervaring</h2>
+        <div class="divider"></div>
+        <p class="about-body">Regelvrij is opgericht door een data professional met jarenlange ervaring in het analyseren en automatiseren van complexe processen voor grote organisaties.</p>
+        <p class="about-body">Nu zet ik diezelfde expertise in voor zelfstandige ondernemers in Utrecht — want ook kleine bedrijven verdienen systemen die voor hen werken, niet andersom.</p>
+        <p class="about-body">Ik werk uitsluitend met zelfstandige eigenaren. Geen grote ketens, geen IT-afdelingen. Gewoon u, uw team en uw klanten.</p>
+        <div class="about-tags">
+          <span class="about-tag">📍 Utrecht gebaseerd</span>
+          <span class="about-tag">🤖 n8n & Claude AI</span>
+          <span class="about-tag">💬 WhatsApp Business</span>
+          <span class="about-tag">📊 Data & automatisering</span>
+          <span class="about-tag">🇳🇱 Volledig in het Nederlands</span>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <div class="quote">Ik zag mijn vriend — een opticien in Utrecht — elke avond na sluitingstijd nog in de winkel zitten. Administratie. Bestellingen. Formulieren. Dat triggerde me. Want dat hoeft niet zo.</div>
+        <div class="quote-author">— Oprichter, Regelvrij · Utrecht</div>
+        <div class="divider"></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;">
+          <strong style="color:var(--ink2);display:block;margin-bottom:8px;">Wat u kunt verwachten:</strong>
+          ✓ Gratis 20-minuten intake gesprek bij u in de zaak<br>
+          ✓ Voorstel binnen 48 uur<br>
+          ✓ Systeem live binnen 5 werkdagen<br>
+          ✓ Geen technische kennis vereist<br>
+          ✓ Geen langlopende contracten
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="gesprek">
+  <div class="cta-inner">
+    <div class="section-eyebrow" style="text-align:center">Klaar om te starten?</div>
+    <h2>Plan een gratis<br><em>20-minuten gesprek</em></h2>
+    <p class="section-sub">Ik kom bij u langs in Utrecht — of we spreken af via videocall. Geen verkooppraatje. Gewoon kijken of er iets te automatiseren valt.</p>
+    <div class="cta-actions">
+      <a href="mailto:mailto:info@regelvrij.com" class="btn-primary">Mail ons direct</a>
+      <a href="tel:+31600000000" class="btn-secondary">📞 Bel: 06-11916704</a>
+    </div>
+    <p class="cta-note">Of stuur ons een WhatsApp — wij reageren binnen 2 uur op werkdagen.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Regel<span>vrij</span></div>
+  <div class="footer-meta">© 2025 Regelvrij · Utrecht · KvK: XXXXXXXX</div>
+  <div class="footer-contact">
+    <a href="mailto:info@regelvrij.com">info@regelvrij.com</a><br>
+    <span>06-11916704</span>
+  </div>
+</footer>
+
+</body>
+</html>
